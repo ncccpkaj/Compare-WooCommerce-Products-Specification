@@ -26,7 +26,7 @@ A WordPress plugin for WooCommerce that lets you build custom product specificat
 
 ## Installation
 
-1. Download the latest ZIP from the [Releases](https://github.com/your-repo/woo-product-compare/releases) page
+1. Download the latest ZIP from the [Releases]([https://github.com/ncccpkaj/Compare-WooCommerce-Products-Specification]) page
 2. In your WordPress admin go to **Plugins → Add New → Upload Plugin**
 3. Upload the ZIP and click **Install Now**, then **Activate**
 
