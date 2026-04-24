@@ -1,0 +1,626 @@
+/* Woo Product Compare — Admin Styles */
+
+/* ── Meta Box ────────────────────────────────────────────────────────────── */
+
+#wpc-meta-box {
+    padding: 4px 0;
+}
+
+#wpc-meta-box .wpc-row {
+    margin-bottom: 12px;
+    background: #f0fafc;
+    border: 1px solid #c6ebf0;
+    border-radius: 4px;
+    padding: 10px 14px;
+}
+
+#wpc-meta-box label {
+    display: inline-block;
+    font-weight: 600;
+    min-width: 180px;
+}
+
+#wpc-specs-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#wpc-specs-table th {
+    background: #f6f7f7;
+    padding: 8px 10px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #c3c4c7;
+}
+
+#wpc-specs-table td {
+    padding: 6px 8px;
+    vertical-align: middle;
+    border-bottom: 1px solid #efefef;
+}
+
+.wpc-row-actions {
+    white-space: nowrap;
+    width: 72px;
+    text-align: center;
+}
+
+.wpc-row-actions .button {
+    padding: 2px 7px;
+    min-height: 26px;
+    line-height: 1;
+}
+
+#wpc-specs-table .wpc-add-row-after {
+    color: #2e6b2e;
+    border-color: #2e6b2e;
+    background: #f1fbf1;
+    font-weight: 700;
+    margin-right: 3px;
+}
+
+#wpc-specs-table .wpc-add-row-after:hover {
+    background: #2e6b2e;
+    color: #fff;
+}
+
+#wpc-specs-table .wpc-del-row {
+    padding: 2px 7px;
+    color: #b32d2e;
+    border-color: #b32d2e;
+    background: #fff8f8;
+}
+
+#wpc-specs-table .wpc-del-row:hover {
+    background: #b32d2e;
+    color: #fff;
+}
+
+/* Orphaned / renamed key shown as readonly */
+input.wpc-key-readonly {
+    background: #fef9e7 !important;
+    border-color: #f0ad4e !important;
+    color: #856404;
+    cursor: not-allowed;
+    font-style: italic;
+}
+
+#wpc-new-key-area {
+    background: #f0f6fc;
+    border: 1px solid #c6ddf0;
+    border-radius: 4px;
+    padding: 10px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+
+/* ── Spec Groups Admin Page ───────────────────────────────────────────────── */
+
+.wpc-wrap h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.wpc-key-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.wpc-key-row input.regular-text {
+    max-width: 360px;
+}
+
+/* ── Table Action Buttons ─────────────────────────────────────────────────── */
+
+.wpc-table-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 12px 0 8px;
+    flex-wrap: wrap;
+}
+
+.wpc-tbl-btn {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.wpc-tbl-btn .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+}
+
+.wpc-tbl-btn:disabled,
+.wpc-tbl-btn.wpc-btn-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.wpc-btn-ai {
+    background: linear-gradient(135deg, #6b21a8, #a855f7) !important;
+    color: #fff !important;
+    border-color: #6b21a8 !important;
+    font-weight: 600;
+}
+
+.wpc-btn-ai:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5b1798, #9333ea) !important;
+}
+
+.wpc-btn-ai .wpc-ai-icon {
+    font-size: 13px;
+    line-height: 1;
+}
+
+.wpc-btn-loading {
+    opacity: 0.75;
+    cursor: wait !important;
+}
+
+/* ── AI Generate buttons (injected into media-buttons bar) ───────────────── */
+
+/* When button sits inside #wp-content-media-buttons / #wp-excerpt-media-buttons
+   it inherits WP's flex row naturally — no wrapper needed. */
+.wpc-ai-desc-bar {
+    display: inline-flex;
+    align-items: center;
+}
+
+.wpc-ai-gen-btn {
+    background: linear-gradient(135deg, #6b21a8, #a855f7) !important;
+    color: #fff !important;
+    border-color: #6b21a8 !important;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 28px;
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.wpc-ai-gen-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5b1798, #9333ea) !important;
+    color: #fff !important;
+}
+
+.wpc-ai-gen-btn .wpc-ai-icon {
+    font-size: 12px;
+    line-height: 1;
+    opacity: .9;
+}
+
+/* ── AI Alert Modal ───────────────────────────────────────────────────────── */
+
+.wpc-alert-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wpc-alert-box {
+    background: #fff;
+    border-radius: 8px;
+    padding: 28px 32px;
+    max-width: 460px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+    text-align: center;
+}
+
+.wpc-alert-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    color: #d97706;
+}
+
+.wpc-alert-msg {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    text-align: left;
+}
+
+.wpc-alert-close {
+    min-width: 80px;
+}
+
+/* ── AI Pre-generation Popup ──────────────────────────────────────────────── */
+
+#wpc-ai-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#wpc-ai-popup {
+    background: #fff;
+    border-radius: 10px;
+    width: 680px;
+    max-width: 95vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 48px rgba(0,0,0,.22);
+    overflow: hidden;
+}
+
+.wpc-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e5e5;
+    background: #fafafa;
+}
+
+.wpc-popup-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e1e1e;
+}
+
+.wpc-popup-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #666;
+    padding: 4px 8px;
+    line-height: 1;
+    border-radius: 4px;
+}
+.wpc-popup-close:hover { background: #f0f0f0; color: #333; }
+
+.wpc-popup-body {
+    padding: 18px 20px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.wpc-popup-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.wpc-popup-row label {
+    min-width: 90px;
+    font-weight: 600;
+    font-size: 12px;
+    padding-top: 6px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    flex-shrink: 0;
+}
+
+.wpc-popup-row label small {
+    font-weight: 400;
+    text-transform: none;
+    color: #999;
+}
+
+.wpc-popup-row select {
+    flex: 1;
+}
+
+.wpc-popup-row-full {
+    flex-direction: column;
+    gap: 4px;
+}
+
+.wpc-popup-row-full label { padding-top: 0; }
+
+.wpc-popup-row-full textarea {
+    width: 100%;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    resize: vertical;
+}
+
+.wpc-popup-warn {
+    background: #fff8e1;
+    border: 1px solid #f0c040;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #856404;
+}
+
+.wpc-popup-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid #e5e5e5;
+    background: #fafafa;
+}
+
+/* ── AI Settings — Product AI Generator Section ───────────────────────────── */
+
+/* Section intro */
+#wpc_ai_section + p,
+.wpc-ai-section-desc {
+    color: #555;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+/* ── Provider grid ─────────────────────────────────────────────────────────── */
+
+.wpc-ai-providers-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    max-width: 980px;
+    margin-top: 8px;
+}
+
+.wpc-ai-provider-card {
+    border: 1.5px solid #e2e2e2;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+
+.wpc-ai-provider-card:hover {
+    border-color: #c4b5fd;
+    box-shadow: 0 3px 12px rgba(109,40,217,.08);
+}
+
+.wpc-ai-provider-card.wpc-provider-active {
+    border-color: #7c3aed;
+    box-shadow: 0 3px 14px rgba(109,40,217,.13);
+}
+
+/* ── Card header ────────────────────────────────────────────────────────────── */
+
+.wpc-provider-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    background: #fafafa;
+    border-bottom: 1px solid #efefef;
+}
+
+.wpc-ai-provider-card.wpc-provider-active .wpc-provider-header {
+    background: linear-gradient(90deg, #f5f0ff 0%, #faf7ff 100%);
+    border-bottom-color: #e4d9fb;
+}
+
+.wpc-provider-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    background: #f0f0f0;
+}
+
+.wpc-provider-name {
+    font-weight: 700;
+    font-size: 13px;
+    flex: 1;
+    color: #1a1a1a;
+}
+
+.wpc-provider-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.wpc-badge-ok   { background: #d1fae5; color: #065f46; }
+.wpc-badge-warn { background: #fef3c7; color: #92400e; }
+
+/* ── Card body ──────────────────────────────────────────────────────────────── */
+
+.wpc-provider-body {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.wpc-provider-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.wpc-provider-row label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b6b6b;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    min-width: unset;
+    display: block;
+}
+
+.wpc-provider-row input[type="password"],
+.wpc-provider-row select {
+    width: 100%;
+    font-size: 12.5px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 5px 8px;
+    background: #fdfdfd;
+    transition: border-color .15s;
+}
+
+.wpc-provider-row input[type="password"]:focus,
+.wpc-provider-row select:focus {
+    border-color: #7c3aed;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(124,58,237,.12);
+}
+
+.wpc-key-row-inner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.wpc-key-row-inner input {
+    flex: 1;
+}
+
+.wpc-get-key-link {
+    font-size: 11px;
+    white-space: nowrap;
+    text-decoration: none;
+    color: #7c3aed;
+    font-weight: 600;
+    padding: 5px 10px;
+    border: 1px solid #c4b5fd;
+    border-radius: 6px;
+    background: #faf5ff;
+    transition: background .15s;
+    flex-shrink: 0;
+}
+
+.wpc-get-key-link:hover {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+/* ── Toggle switch ──────────────────────────────────────────────────────────── */
+
+.wpc-provider-toggle {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.wpc-provider-toggle input { display: none; }
+
+.wpc-toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: #d1d5db;
+    border-radius: 22px;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.wpc-toggle-slider:before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform .2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.18);
+}
+
+.wpc-provider-toggle input:checked ~ .wpc-toggle-slider { background: #7c3aed; }
+.wpc-provider-toggle input:checked ~ .wpc-toggle-slider:before { transform: translateX(18px); }
+
+/* ── Prompt textareas ──────────────────────────────────────────────────────── */
+
+.wpc-prompt-wrap {
+    max-width: 760px;
+}
+
+.wpc-prompt-wrap .wpc-prompt-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.wpc-prompt-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: 1px 7px;
+    border-radius: 10px;
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+table.form-table td .large-text {
+    border-radius: 8px;
+    border-color: #ddd;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    padding: 10px 12px;
+    transition: border-color .15s;
+}
+
+table.form-table td .large-text:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 2px rgba(124,58,237,.1);
+    outline: none;
+}
+
+table.form-table td p.description {
+    font-size: 11.5px;
+    color: #777;
+    margin-top: 4px;
+}
+
+table.form-table td p.description code {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 11px;
+    color: #4b5563;
+}

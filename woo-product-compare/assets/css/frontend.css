@@ -1,0 +1,448 @@
+/* ============================================================
+   Woo Product Compare — Frontend Styles
+   ============================================================ */
+
+/* ── Single Product Spec Table  [wpc_specs] ──────────────────── */
+
+.wpc-spec-table-wrap { margin: 20px 0; }
+
+.wpc-spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93em;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.wpc-spec-table th,
+.wpc-spec-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+    vertical-align: top;
+}
+
+.wpc-spec-table th {
+    background: #f7f7f7;
+    font-weight: 600;
+    width: 32%;
+    color: #444;
+    white-space: nowrap;
+}
+
+.wpc-spec-table tr:last-child th,
+.wpc-spec-table tr:last-child td { border-bottom: none; }
+
+.wpc-compare-btn {
+    display: inline-block;
+    margin-top: 12px;
+    text-decoration: none;
+}
+
+/* ============================================================
+   Compare Page  [woo_compare]
+   ============================================================ */
+
+.wpc-compare-wrap {
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.92em;
+    font-family: inherit;
+}
+
+/* ── Outer wrapper ────────────────────────────────────────── */
+
+.wpc-compare-top-wrap {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ── Unified table ────────────────────────────────────────── */
+
+.wpc-top-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin: 0px;
+}
+
+.wpc-top-table td {
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    padding: 0;
+}
+.wpc-top-table tbody tr:last-child td { border-bottom: none; }
+.wpc-top-table td:last-child { border-right: none; }
+
+/* ── Info / brand column ──────────────────────────────────── */
+
+.wpc-info-col {
+    width: 22%;
+    background: #f7f7f7;
+}
+
+.wpc-brand-cell { padding: 20px 18px; }
+
+.wpc-brand-cell strong {
+    display: block;
+    font-size: 1em;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #222;
+}
+
+.wpc-brand-cell p {
+    font-size: 0.87em;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ── Product slot columns ─────────────────────────────────── */
+
+.wpc-slot-col {
+    width: 26%;
+    padding: 14px 14px 16px;
+    position: relative;
+    vertical-align: top;
+}
+
+/* ── Search box ───────────────────────────────────────────── */
+
+.wpc-slot-search-state { position: relative; }
+
+.wpc-search-box-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #ddd;
+    border-radius: 6px;
+    padding: 2px 12px;
+    margin: 10px;
+    background: #fff;
+    gap: 6px;
+    transition: border-color .2s;
+}
+
+.wpc-search-box-wrap:focus-within { border-color: #aaa; }
+
+.wpc-search-icon { flex-shrink: 0; line-height: 0; }
+
+.wpc-search-input {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: 100%;
+    font-size: 0.9em;
+    background: transparent;
+    color: #333;
+    height: 36px !important;
+}
+
+.wpc-clear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 0.8em;
+    padding: 0 2px;
+    line-height: 1;
+    flex-shrink: 0;
+    height: 30px !important;
+    min-height: 30px !important;
+    width: 30px;
+    padding: 0px !important;
+    border-radius: 6px !important;
+    margin-right: -6px;
+}
+.wpc-clear-btn:hover { color: #555; }
+
+.wpc-slot-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    margin-top: 10px;
+}
+
+/* ── Suggestions dropdown ─────────────────────────────────── */
+
+.wpc-suggestions {
+    position: absolute;
+    top: 44px;
+    left: 4px;
+    right: 4px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    z-index: 10;
+    box-shadow: 0 6px 10px rgb(0 0 0 / 6%);
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.wpc-suggest-item {
+    display: flex;
+    align-items: center;
+    margin: 0px !important;
+    gap: 5px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 0.88em;
+    transition: background .15s;
+    border-bottom: 1px solid #e8e5e5;
+}
+
+.wpc-suggest-item:last-child { border-bottom: none; }
+.wpc-suggest-item:hover      { background: #F3F3F3; }
+
+.wpc-suggest-item img {
+    width: 34px !important; height: 34px !important;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
+    border: 1px solid #eee;
+}
+
+.wpc-suggest-name { flex: 1; line-height: 1.3; color: #333; }
+
+.wpc-suggest-loading,
+.wpc-suggest-none {
+    padding: 10px 14px;
+    color: #999;
+    font-size: 0.85em;
+    list-style: none;
+}
+
+/* ── Skeleton suggestion rows (search loading state) ─────── */
+
+.wpc-suggest-skel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    list-style: none;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.wpc-suggest-skel:last-child { border-bottom: none; }
+
+.wpc-ss-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.wpc-ss-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.wpc-ss-line {
+    height: 11px;
+    border-radius: 5px;
+}
+
+/* ── Skeleton loader ──────────────────────────────────────── */
+
+@keyframes wpc-shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position:  400px 0; }
+}
+
+.wpc-skel-pulse {
+    border-radius: 6px;
+    background: linear-gradient(90deg, #ececec 25%, #f8f8f8 50%, #ececec 75%);
+    background-size: 800px 100%;
+    animation: wpc-shimmer 1.4s infinite linear;
+}
+
+.wpc-skeleton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0 8px;
+}
+
+.wpc-skel-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.wpc-skel-line {
+    height: 12px;
+    border-radius: 6px;
+    align-self: center;
+}
+
+.wpc-skel-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.wpc-skel-btn {
+    width: 72px;
+    height: 28px;
+    border-radius: 4px;
+}
+
+/* ── Product card ─────────────────────────────────────────── */
+
+.wpc-slot-product-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+}
+
+.wpc-prod-img {
+    width: 100%;
+    max-width: 140px !important;
+    height: 140px;
+    object-fit: contain;
+    border-radius: 4px;
+    display: block;
+    margin: 0 auto;
+}
+
+.wpc-prod-name {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9em;
+    color: #222;
+    text-decoration: none;
+    line-height: 1.3;
+    margin-top: 4px;
+}
+
+.wpc-prod-name:hover { color: #7f54b3; }
+
+.wpc-prod-price {
+    font-size: 0.9em;
+    color: #333;
+    font-weight: 500;
+}
+
+.wpc-prod-price del {
+    color: #aaa;
+    font-weight: 400;
+    margin-left: 4px;
+    font-size: 0.9em;
+}
+
+.wpc-prod-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.wpc-prod-actions .wpc-btn-remove, .wpc-prod-actions .wpc-btn-shop{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px !important;
+    min-height: 30px !important;
+    border-radius: 4px !important;
+    font-size: 12px;
+}
+
+.wpc-btn-remove {
+    background: #fff;
+    border: 1.5px solid #ddd;
+    color: #444;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.82em;
+    transition: all .15s;
+}
+
+.wpc-btn-remove:hover {
+    border-color: #c00;
+    color: #c00;
+}
+
+.wpc-btn-shop {
+    background: #f0860a;
+    color: #fff !important;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.82em;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: background .15s;
+    display: inline-block;
+}
+
+.wpc-btn-shop:hover { background: #d9770a; }
+
+/* ── Spec rows inside unified table ───────────────────────── */
+
+#wpc-main-table tr.wpc-spec-row td {
+    border-top: 1px solid #f0f0f0;
+    border-right: 1px solid #e8e8e8;
+    padding: 10px 14px;
+    vertical-align: middle;
+    font-size: 16px;
+}
+
+#wpc-main-table tr.wpc-spec-row td:last-child { border-right: none; }
+
+#wpc-main-table tr.wpc-spec-row:nth-child(even) td { background: #fafafa; }
+
+#wpc-main-table .wpc-spec-key-col {
+    font-weight: 600;
+    color: #444;
+    background: #f7f7f7 !important;
+}
+
+#wpc-main-table .wpc-spec-val-col {
+    text-align: center;
+    color: #333;
+}
+
+#wpc-main-table .wpc-empty-col { background: #fafafa; }
+
+#wpc-main-table .wpc-na { color: #ccc; }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .wpc-compare-top-wrap { overflow-x: auto; }
+    .wpc-brand-cell       { padding: 6px 8px; }
+    .wpc-top-table        { min-width: 640px; }
+    .wpc-info-col         { width: 28%; }
+    .wpc-slot-col         { width: 24%; }
+    .wpc-prod-img         { height: 90px; }
+    .wpc-prod-actions     { flex-direction: column; gap: 5px; }
+    .wpc-skel-img         { width: 80px; height: 80px; }
+    .wpc-search-box-wrap{
+        margin: 4px;
+        padding: 1px 5px;
+    }
+    .wpc-clear-btn{ margin-right: -1px; }
+    .wpc-suggestions{ top: 42px; }
+    #wpc-main-table tr.wpc-spec-row td{font-size: 14px;padding: 6px;}
+}
+
+@media (max-width: 480px) {
+    .wpc-brand-cell strong { font-size: 0.85em; }
+    .wpc-brand-cell p      { font-size: 0.78em; }
+}
