@@ -3,7 +3,7 @@
  * Plugin Name:     Woo Product Compare
  * Plugin URI:      https://github.com/ncccpkaj/Compare-WooCommerce-Products-Specification
  * Description:     Compare WooCommerce products using specification groups. Create groups, assign specs on products, display them anywhere, and use AI to generate descriptions, short descriptions, and specs.
- * Version:         1.2.0
+ * Version:         1.2.1
  * Author:          Nayeem Hasan
  * Text Domain:     woo-product-compare
  * Domain Path:     /languages
@@ -14,7 +14,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // ── Constants ────────────────────────────────────────────────────────────────
-define( 'WPC_VERSION',   '1.2.0' );
+define( 'WPC_VERSION',   '1.2.1' );
 define( 'WPC_FILE',      __FILE__ );
 define( 'WPC_PATH',      plugin_dir_path( __FILE__ ) );
 define( 'WPC_URL',       plugin_dir_url( __FILE__ ) );
