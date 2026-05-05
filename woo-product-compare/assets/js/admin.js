@@ -56,11 +56,9 @@
     function updateTableButtons() {
         var hasRows  = $('#wpc-specs-tbody .wpc-spec-row').length > 0;
         var hasGroup = !!currentGroup;
-        var clip     = getClipboard();
-        var pasteOk  = clip && hasGroup && clip.group === currentGroup;
 
         setBtn('#wpc-btn-copy',     hasRows);
-        setBtn('#wpc-btn-paste',    pasteOk);
+        setBtn('#wpc-btn-paste',    hasGroup);
         setBtn('#wpc-btn-generate', hasGroup);
 
         if (wpcAdmin.aiActive) {
@@ -79,6 +77,9 @@
     // COPY / PASTE / GENERATE
     // =========================================================================
 
+    var CLIPBOARD_MARKER = 'WPC_SPEC_TABLE_V1';
+    var CLIPBOARD_TYPE   = 'woo-product-compare/spec-table';
+
     function onCopy() {
         var rows = [];
         $('#wpc-specs-tbody .wpc-spec-row').each(function () {
@@ -88,23 +89,189 @@
             if (key) rows.push({ key: key, value: val || '' });
         });
         if (!rows.length) return;
-        try { localStorage.setItem('wpc_spec_clipboard', JSON.stringify({ group: currentGroup, rows: rows })); } catch(e) {}
-        updateTableButtons();
-        var $b = $('#wpc-btn-copy'), orig = $b.text();
-        $b.text('✓ Copied!');
-        setTimeout(function () { $b.text(orig); }, 1500);
+
+        var clip = {
+            type: CLIPBOARD_TYPE,
+            version: 1,
+            group: currentGroup,
+            groupLabel: getCurrentGroupLabel(),
+            rows: rows
+        };
+
+        saveLocalClipboard(clip);
+        writeSystemClipboard(clip).done(function () {
+            updateTableButtons();
+            flashButton('#wpc-btn-copy', 'Copied!');
+        }).fail(function () {
+            updateTableButtons();
+            flashButton('#wpc-btn-copy', 'Copy blocked');
+            alert('The table was copied for this site, but the browser blocked system clipboard access. Allow clipboard access to paste across sites.');
+        });
     }
 
     function onPaste() {
-        var clip = getClipboard();
-        if (!clip || clip.group !== currentGroup) { alert('Nothing to paste, or category does not match.'); return; }
-        var keys = getCurrentKeys();
-        clip.rows.forEach(function (r) { addRowAtEnd(keys, r.key, r.value); });
-        reindexRows(); updateTableButtons();
+        if (!currentGroup) return;
+
+        var $btn = $('#wpc-btn-paste');
+        setBtn('#wpc-btn-paste', false);
+
+        readSpecClipboard().done(function (clip) {
+            if (!clip) {
+                alert('Nothing to paste. Copy a spec table first.');
+                return;
+            }
+            if (!isClipboardGroupCompatible(clip)) {
+                alert('Copied spec table category does not match the selected category.');
+                return;
+            }
+
+            var keys = getCurrentKeys();
+            clip.rows.forEach(function (r) { addRowAtEnd(keys, r.key, r.value); });
+            reindexRows();
+            flashButton('#wpc-btn-paste', 'Pasted!');
+        }).fail(function () {
+            alert('Could not read the clipboard. Please allow clipboard access and try again.');
+        }).always(function () {
+            updateTableButtons();
+            $btn.blur();
+        });
     }
 
     function getClipboard() {
         try { var r = localStorage.getItem('wpc_spec_clipboard'); return r ? JSON.parse(r) : null; } catch(e) { return null; }
+    }
+
+    function saveLocalClipboard(clip) {
+        try { localStorage.setItem('wpc_spec_clipboard', JSON.stringify(clip)); } catch(e) {}
+    }
+
+    function writeSystemClipboard(clip) {
+        var d = $.Deferred();
+        var text = serializeClipboard(clip);
+        var html = buildClipboardHtml(clip);
+
+        if (navigator.clipboard && window.ClipboardItem) {
+            try {
+                navigator.clipboard.write([
+                    new ClipboardItem({
+                        'text/plain': new Blob([text], { type: 'text/plain' }),
+                        'text/html':  new Blob([html], { type: 'text/html' })
+                    })
+                ]).then(function () {
+                    d.resolve();
+                }).catch(function () {
+                    copyTextFallback(text) ? d.resolve() : d.reject();
+                });
+                return d.promise();
+            } catch(e) {}
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+                d.resolve();
+            }).catch(function () {
+                copyTextFallback(text) ? d.resolve() : d.reject();
+            });
+            return d.promise();
+        }
+
+        copyTextFallback(text) ? d.resolve() : d.reject();
+        return d.promise();
+    }
+
+    function readSpecClipboard() {
+        var d = $.Deferred();
+        var localClip = normalizeClipboard(getClipboard());
+
+        if (navigator.clipboard && navigator.clipboard.readText) {
+            navigator.clipboard.readText().then(function (text) {
+                d.resolve(parseClipboardText(text) || localClip);
+            }).catch(function () {
+                d.resolve(localClip);
+            });
+        } else {
+            d.resolve(localClip);
+        }
+
+        return d.promise();
+    }
+
+    function serializeClipboard(clip) {
+        return CLIPBOARD_MARKER + "\n" + JSON.stringify(clip);
+    }
+
+    function parseClipboardText(text) {
+        if (!text) return null;
+        var raw = String(text).trim();
+        var markerPos = raw.indexOf(CLIPBOARD_MARKER);
+
+        if (markerPos !== -1) {
+            raw = raw.substring(markerPos + CLIPBOARD_MARKER.length).trim();
+        }
+
+        try {
+            return normalizeClipboard(JSON.parse(raw));
+        } catch(e) {
+            return null;
+        }
+    }
+
+    function normalizeClipboard(clip) {
+        if (!clip || !Array.isArray(clip.rows)) return null;
+
+        var rows = [];
+        clip.rows.forEach(function (row) {
+            if (!row || row.key === undefined || row.key === null || String(row.key).trim() === '') return;
+            rows.push({
+                key: String(row.key),
+                value: row.value === undefined || row.value === null ? '' : String(row.value)
+            });
+        });
+
+        if (!rows.length) return null;
+
+        return {
+            type: clip.type || CLIPBOARD_TYPE,
+            version: clip.version || 1,
+            group: clip.group ? String(clip.group) : '',
+            groupLabel: clip.groupLabel ? String(clip.groupLabel) : '',
+            rows: rows
+        };
+    }
+
+    function isClipboardGroupCompatible(clip) {
+        if (!clip || !currentGroup) return false;
+        if (clip.group && clip.group === currentGroup) return true;
+
+        var copiedLabel = (clip.groupLabel || '').toLowerCase();
+        var currentLabel = getCurrentGroupLabel().toLowerCase();
+        return !!copiedLabel && copiedLabel === currentLabel;
+    }
+
+    function buildClipboardHtml(clip) {
+        var html = '<table data-wpc-clipboard="' + escAttr(JSON.stringify(clip)) + '"><tbody>';
+        clip.rows.forEach(function (row) {
+            html += '<tr><th>' + escHtml(row.key) + '</th><td>' + escHtml(row.value) + '</td></tr>';
+        });
+        return html + '</tbody></table>';
+    }
+
+    function copyTextFallback(text) {
+        var $ta = $('<textarea readonly>');
+        $ta.css({ position: 'fixed', top: '-9999px', left: '-9999px', opacity: 0 }).val(text);
+        $('body').append($ta);
+        $ta[0].select();
+
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch(e) {}
+        $ta.remove();
+        return ok;
+    }
+
+    function flashButton(selector, text) {
+        var $b = $(selector), orig = $b.text();
+        $b.text(text);
+        setTimeout(function () { $b.text(orig); }, 1500);
     }
 
     function onGenerate() {
@@ -464,8 +631,14 @@
     function buildRow(keys, selectedKey, selectedVal) {
         var idx  = rowIndex++;
         var $row = $($('#wpc-row-template').html().replace(/__IDX__/g, idx));
-        $row.find('.wpc-key-select').html(buildOptions(keys, selectedKey));
-        if (selectedVal !== undefined) $row.find('input[type=text]').val(selectedVal);
+        if (selectedKey && keys.indexOf(selectedKey) === -1) {
+            $row.find('.wpc-key-select').replaceWith(
+                '<input type="text" name="wpc_specs[' + idx + '][key]" value="' + escAttr(selectedKey) + '" class="widefat wpc-key-readonly" readonly>'
+            );
+        } else {
+            $row.find('.wpc-key-select').html(buildOptions(keys, selectedKey));
+        }
+        if (selectedVal !== undefined) $row.find('input[type=text]:not(.wpc-key-readonly)').val(selectedVal);
         return $row;
     }
 
@@ -509,6 +682,10 @@
         return keys;
     }
 
+    function getCurrentGroupLabel() {
+        return $('#wpc_spec_group option:selected').text().trim();
+    }
+
     function addKeyToGroup(group, key) {
         var $msg = $('#wpc_new_key_msg');
         $.post(wpcAdmin.ajaxUrl, { action: 'wpc_add_new_key', nonce: wpcAdmin.nonce, group: group, key: key }, function (res) {
@@ -548,7 +725,13 @@
     }
 
     function escHtml(s)  { return $('<div>').text(String(s)).html(); }
-    function escAttr(s)  { return String(s).replace(/"/g, '&quot;'); }
+    function escAttr(s)  {
+        return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
     function esc(s)      { return escHtml(s); }
 
 })(jQuery);
