@@ -77,8 +77,10 @@
     // COPY / PASTE / GENERATE
     // =========================================================================
 
-    var CLIPBOARD_MARKER = 'WPC_SPEC_TABLE_V1';
-    var CLIPBOARD_TYPE   = 'woo-product-compare/spec-table';
+    var CLIPBOARD_MARKER    = 'WPC_SPEC_TABLE_V2';
+    var OLD_CLIPBOARD_MARKER = 'WPC_SPEC_TABLE_V1';
+    var CLIPBOARD_TYPE      = 'woo-product-compare/spec-table';
+    var LOCAL_CLIP_MAX_AGE  = 30 * 60 * 1000;
 
     function onCopy() {
         var rows = [];
@@ -92,9 +94,10 @@
 
         var clip = {
             type: CLIPBOARD_TYPE,
-            version: 1,
+            version: 2,
             group: currentGroup,
             groupLabel: getCurrentGroupLabel(),
+            copiedAt: Date.now(),
             rows: rows
         };
 
@@ -115,7 +118,7 @@
         var $btn = $('#wpc-btn-paste');
         setBtn('#wpc-btn-paste', false);
 
-        readSpecClipboard().done(function (clip) {
+        readSpecClipboard().then(function (clip) {
             if (!clip) {
                 alert('Nothing to paste. Copy a spec table first.');
                 return;
@@ -129,8 +132,6 @@
             clip.rows.forEach(function (r) { addRowAtEnd(keys, r.key, r.value); });
             reindexRows();
             flashButton('#wpc-btn-paste', 'Pasted!');
-        }).fail(function () {
-            alert('Could not read the clipboard. Please allow clipboard access and try again.');
         }).always(function () {
             updateTableButtons();
             $btn.blur();
@@ -181,23 +182,28 @@
 
     function readSpecClipboard() {
         var d = $.Deferred();
-        var localClip = normalizeClipboard(getClipboard());
+        var localClip = getFreshLocalClipboard();
 
         if (navigator.clipboard && navigator.clipboard.readText) {
             navigator.clipboard.readText().then(function (text) {
-                d.resolve(parseClipboardText(text) || localClip);
+                var clip = parseClipboardText(text);
+                if (clip) {
+                    d.resolve(clip);
+                } else {
+                    requestManualPaste(localClip).then(d.resolve);
+                }
             }).catch(function () {
-                d.resolve(localClip);
+                requestManualPaste(localClip).then(d.resolve);
             });
         } else {
-            d.resolve(localClip);
+            requestManualPaste(localClip).then(d.resolve);
         }
 
         return d.promise();
     }
 
     function serializeClipboard(clip) {
-        return CLIPBOARD_MARKER + "\n" + JSON.stringify(clip);
+        return CLIPBOARD_MARKER + "\n" + encodePayload(clip);
     }
 
     function parseClipboardText(text) {
@@ -207,6 +213,12 @@
 
         if (markerPos !== -1) {
             raw = raw.substring(markerPos + CLIPBOARD_MARKER.length).trim();
+            return normalizeClipboard(decodePayload(raw));
+        }
+
+        markerPos = raw.indexOf(OLD_CLIPBOARD_MARKER);
+        if (markerPos !== -1) {
+            raw = raw.substring(markerPos + OLD_CLIPBOARD_MARKER.length).trim();
         }
 
         try {
@@ -235,8 +247,15 @@
             version: clip.version || 1,
             group: clip.group ? String(clip.group) : '',
             groupLabel: clip.groupLabel ? String(clip.groupLabel) : '',
+            copiedAt: clip.copiedAt ? Number(clip.copiedAt) : 0,
             rows: rows
         };
+    }
+
+    function getFreshLocalClipboard() {
+        var clip = normalizeClipboard(getClipboard());
+        if (!clip || !clip.copiedAt) return null;
+        return Date.now() - clip.copiedAt <= LOCAL_CLIP_MAX_AGE ? clip : null;
     }
 
     function isClipboardGroupCompatible(clip) {
@@ -249,11 +268,77 @@
     }
 
     function buildClipboardHtml(clip) {
-        var html = '<table data-wpc-clipboard="' + escAttr(JSON.stringify(clip)) + '"><tbody>';
+        var encoded = encodePayload(clip);
+        var html = '<table data-wpc-clipboard="' + escAttr(CLIPBOARD_MARKER) + '" data-wpc-payload="' + escAttr(encoded) + '"><tbody>';
         clip.rows.forEach(function (row) {
             html += '<tr><th>' + escHtml(row.key) + '</th><td>' + escHtml(row.value) + '</td></tr>';
         });
         return html + '</tbody></table>';
+    }
+
+    function encodePayload(clip) {
+        return btoa(unescape(encodeURIComponent(JSON.stringify(clip))));
+    }
+
+    function decodePayload(payload) {
+        try {
+            return JSON.parse(decodeURIComponent(escape(atob(String(payload).replace(/\s+/g, '')))));
+        } catch(e) {
+            return null;
+        }
+    }
+
+    function requestManualPaste(localClip) {
+        var d = $.Deferred();
+        var $overlay = $('<div class="wpc-alert-overlay">');
+        var $box = $(
+            '<div class="wpc-alert-box">' +
+                '<div class="wpc-alert-msg"></div>' +
+                '<textarea class="widefat" rows="6" style="margin:12px 0;min-width:420px;"></textarea>' +
+                '<button type="button" class="button button-primary wpc-manual-paste-apply">Paste Table</button> ' +
+                (localClip ? '<button type="button" class="button wpc-manual-paste-local">Use Same-Site Copy</button> ' : '') +
+                '<button type="button" class="button wpc-manual-paste-cancel">Cancel</button>' +
+            '</div>'
+        );
+
+        $box.find('.wpc-alert-msg').text('Browser clipboard access was blocked. Press Ctrl+V in the box below, then click Paste Table.');
+        $overlay.append($box);
+        $('body').append($overlay);
+
+        var $textarea = $box.find('textarea');
+        setTimeout(function () { $textarea.trigger('focus'); }, 50);
+
+        $textarea.on('paste', function () {
+            setTimeout(function () {
+                var clip = parseClipboardText($textarea.val());
+                if (clip) {
+                    $overlay.remove();
+                    d.resolve(clip);
+                }
+            }, 0);
+        });
+
+        $overlay.on('click', '.wpc-manual-paste-apply', function () {
+            var clip = parseClipboardText($textarea.val());
+            if (clip) {
+                $overlay.remove();
+                d.resolve(clip);
+                return;
+            }
+            alert('The pasted text is not a valid spec table copy.');
+        });
+
+        $overlay.on('click', '.wpc-manual-paste-local', function () {
+            $overlay.remove();
+            d.resolve(localClip);
+        });
+
+        $overlay.on('click', '.wpc-manual-paste-cancel', function () {
+            $overlay.remove();
+            d.resolve(null);
+        });
+
+        return d.promise();
     }
 
     function copyTextFallback(text) {
