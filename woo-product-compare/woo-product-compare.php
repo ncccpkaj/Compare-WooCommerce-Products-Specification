@@ -3,22 +3,30 @@
  * Plugin Name:     Woo Product Compare
  * Plugin URI:      https://github.com/ncccpkaj/Compare-WooCommerce-Products-Specification
  * Description:     Compare WooCommerce products using specification groups. Create groups, assign specs on products, display them anywhere, and use AI to generate descriptions, short descriptions, and specs.
- * Version:         1.2.1
+ * Version:         1.2.2
  * Author:          Nayeem Hasan
  * Text Domain:     woo-product-compare
  * Domain Path:     /languages
  * Requires PHP:    7.4
  * WC requires at least: 5.0
+ * WC tested up to: 10.8.1
  */
 
 defined( 'ABSPATH' ) || exit;
 
 // ── Constants ────────────────────────────────────────────────────────────────
-define( 'WPC_VERSION',   '1.2.1' );
+define( 'WPC_VERSION',   '1.2.2' );
 define( 'WPC_FILE',      __FILE__ );
 define( 'WPC_PATH',      plugin_dir_path( __FILE__ ) );
 define( 'WPC_URL',       plugin_dir_url( __FILE__ ) );
 define( 'WPC_BASENAME',  plugin_basename( __FILE__ ) );
+
+add_action( 'before_woocommerce_init', 'wpc_declare_woocommerce_feature_compatibility' );
+function wpc_declare_woocommerce_feature_compatibility() {
+    if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+    }
+}
 
 // ── Dependency check ─────────────────────────────────────────────────────────
 function wpc_check_woocommerce() {
